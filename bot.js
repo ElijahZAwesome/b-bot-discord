@@ -14,7 +14,12 @@ bot.on('disconnect', function(errMsg, code) { });
 
 bot.on('ready', function() {
     console.log('Logged in as %s - %s\n', bot.username, bot.id);
-    bot.setPresence ( {game: {name: "Type 'help m’lady'", type: 0, url: ''}});
+    bot.setPresence ({
+	game: {
+	name: "Type $$help",
+	type: 0
+	}
+	});
 });
 
 bot.on('message', function(user, userID, channelID, message, event, callback, inviteURL, usertodm) {
