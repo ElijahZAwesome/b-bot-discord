@@ -1,0 +1,16 @@
+{
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "name": "B Bot",
+  "description": "a really cool bot",
+  "version": "1.0.0",
+  "engines": {
+    "node": "6.11.1"
+  }
+}
