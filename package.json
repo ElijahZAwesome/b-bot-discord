@@ -8,9 +8,14 @@
     }
   ],
   "name": "B Bot",
-  "description": "a really cool bot",
+  "description": "A bot for random commands, namely voice commands",
   "version": "1.0.0",
   "engines": {
     "node": "6.11.1"
+  },
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "forever-monitor": "^1.7.1",
+    "ytdl-core": "^0.18.1"
   }
 }
