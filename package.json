@@ -16,6 +16,7 @@
   "dependencies": {
     "discord.io": "^2.5.3",
     "forever-monitor": "^1.7.1",
+    "jimp": "^0.2.28",
     "ytdl-core": "^0.18.1"
   }
 }

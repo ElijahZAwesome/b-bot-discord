@@ -1,8 +1,9 @@
 var Discord = require('discord.io');
 var fs = require('fs');
 var ytdl = require('ytdl-core');
+var Jimp = require("jimp");
 
-var voiceChannelID = "370910137805832194";
+var voiceChannelID = "370980137805832194";
 var bot = new Discord.Client({
     token: "MzcyODkyNDE0ODU3NDQ1Mzc2.DNLDKA.oUFgVbskjGZpT85Z8lmXvRlcKfw",
     autorun: true
@@ -15,7 +16,15 @@ http.createServer(function(req, res) {
     })
     res.send("Bot is running.")
 
-}).listen(process.env.PORT || 3000) // Changed to valid developer port.
+}).listen(process.env.PORT || 3001) // Changed to valid developer port.
+
+function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}
 
 bot.on('disconnect', function(errMsg, code) {});
 bot.on('ready', function() {
@@ -204,5 +213,36 @@ bot.on('message', function(user, userID, channelID, message, event, callback, in
         userID: userID,
         nick: "" + nick
     });
+}  else if (message === '$$moana')  {
+	bot.sendMessage({to: channelID, message: "https://pastebin.com/29H57CWc"});
+} else if (message === '$$deepfry') {
+	Jimp.read("lenna.png", function(err, masklenna) {
+	    if (err) throw err;
+
+	    masklenna
+	        .composite(masklenna, 0, 0)
+		    .pixelate(1)
+		    .contrast(1)
+		    .contrast(1)
+		    .color([
+		    { apply: 'saturate', params: [ 100 ] },
+			{apply: 'brighten', params: [ 30 ] },
+			{ apply: 'saturate', params: [ 100 ] }
+		])
+	        .write("test.jpg");
+
+	    setTimeout(() => {
+	        bot.uploadFile({
+	            to: channelID,
+	            file: "test.jpg"
+	        }, function(err, res) {
+	            if (err) {
+	                console.log(err);
+	                return;
+	            }
+	            fs.unlink("test.jpg");
+	        });
+	    }, 200);
+	});
 }
 });
