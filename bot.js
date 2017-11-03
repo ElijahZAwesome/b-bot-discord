@@ -2,6 +2,7 @@ var Discord = require('discord.io');
 var fs = require('fs');
 var ytdl = require('ytdl-core');
 var Jimp = require("jimp");
+var Worker = require('webworker-threads').Worker;
 
 var voiceChannelID = "370980137805832194";
 var bot = new Discord.Client({
@@ -78,7 +79,7 @@ bot.on('message', function(user, userID, channelID, message, event, callback, in
     } else if (message === "$$help") {
         bot.sendMessage({
             to: channelID,
-            message: "Commands: \n$$help Opens this page \n$$givemeinvite Gives the invite for this bot \n$$ping For testing, says pong back \n$$dm Sends you a test DM cause why not \n$$youtube (link) Plays the youtube link in your voice channel \n$$stop Stops whatever is being played.",
+            message: "Commands: \n$$help || Sends this message \n$$givemeinvite || Gives the invite for this bot \n$$ping || For testing, says pong back \n$$dm || Sends you a test DM cause why not \n$$changenick -*nickname* || Changes your nickname to what you choose (doesnt work on server owner)\n$$youtube *link* || Plays the youtube link in your voice channel \n$$stop || Stops whatever is being played. \n$$deepfry *link* || Deep fries the image link you give it. (careful with this, it lags. the bot)",
             typing: false
         });
     } else if (
@@ -90,6 +91,9 @@ bot.on('message', function(user, userID, channelID, message, event, callback, in
             to: channelID,
             message: "" + bot.inviteURL,
         })
+	} else if (message === "$$thot") {
+		bot.sendMessage({to: channelID, message: "Omae wa mou Shindeiru", typing: false});
+		bot.uploadFile({to: channelID, file: "thot.gif", message: "***N A N I?!??!!?!***"});
     } else if (message === "$$repeat") {
         var repeat = 1;
     } else if (message === "$$music") {
@@ -177,23 +181,24 @@ bot.on('message', function(user, userID, channelID, message, event, callback, in
                     to: channelID,
                     message: "Could not join voice channel. Make sure to join a channel before using this command."
                 });
+                if (message.indexOf('youtube.com') >= 0) {
+                    var id = message.substr(message.indexOf("=") + 1);
+                }
+                if (message.indexOf('youtu.be') >= 0) {
+                    if (message.indexOf('http') >= 0) {
+                        var id = message.slice(26);
+                    }
+                    if (message.indexOf('https') >= 0) {
+                        var id = message.slice(27);
+                    }
+                }
                 console.log("Joined voice channel");
                 bot.getAudioContext(chan, function(error, stream) {
                         if (error) return console.error(error), bot.sendMessage({
                             to: channelID,
                             message: "Could not connect to voice channel, make sure your in one. If you are... idk"
                         });
-                        if (message.indexOf('youtube.com') >= 0) {
-                            var id = message.substr(message.indexOf("=") + 1);
-                        }
-                        if (message.indexOf('youtu.be') >= 0) {
-                            if (message.indexOf('http') >= 0) {
-                                var id = message.slice(26);
-                            }
-                            if (message.indexOf('https') >= 0) {
-                                var id = message.slice(27);
-                            }
-                        }
+						if (id !== 'pXg8Pdfgd8U') {};
                         ytdl('http://www.youtube.com/watch?v=' + id)
                             .pipe(stream, {
                                 end: false
@@ -205,44 +210,68 @@ bot.on('message', function(user, userID, channelID, message, event, callback, in
 
 } else if (message.startsWith("$$changenick")) {
     console.log("changenick command received.");
-    var nick = message.substr(message.indexOf('"') + 1);
+	var serverID = bot.channels[channelID].guild_id;
+    var nick = message.substr(message.indexOf('-') + 1);
     console.log(nick);
-    nick.replace(/"/g, "");
     bot.editNickname({
         serverID: serverID,
         userID: userID,
-        nick: "" + nick
-    });
+        nick: nick
+    }, function(error){if (error) return console.error(error), bot.sendMessage({to: channelID, message: "Nickname change failed. Make sure I have the permissions to do so."});});
 }  else if (message === '$$moana')  {
 	bot.sendMessage({to: channelID, message: "https://pastebin.com/29H57CWc"});
-} else if (message === '$$deepfry') {
-	Jimp.read("lenna.png", function(err, masklenna) {
+} else if (message.startsWith('$$deepfry')) {
+	if (message.indexOf('http') >= 0) {
+		var link = message.substr(message.indexOf("h") + 1);
+		console.log(link);
+	    deepfry();
+    } else {
+    	bot.sendMessage({to: channelID, message: "Make sure to provide a link to an image."});
+    }
+}
+function deepfry() {
+	console.log("deep frying meme");
+	console.log(link);
+	Jimp.read("h" + link, function(err, masklenna) {
 	    if (err) throw err;
 
 	    masklenna
-	        .composite(masklenna, 0, 0)
-		    .pixelate(1)
 		    .contrast(1)
 		    .contrast(1)
+		    .quality(1)
 		    .color([
 		    { apply: 'saturate', params: [ 100 ] },
 			{apply: 'brighten', params: [ 30 ] },
 			{ apply: 'saturate', params: [ 100 ] }
 		])
-	        .write("test.jpg");
-
+		if (masklenna.getExtension() === "png") {
+	        masklenna.write("test.jpeg");
+		} else if (masklenna.getExtension() === "jpg") {
+			masklenna.write("test.jpeg");
+		} else if (masklenna.getExtension() === "jpeg") {
+			masklenna.write("test.jpeg");
+		} else if (masklenna.getExtension() === "bmp") {
+			masklenna.write("test.jpeg");
+		} else if (masklenna.getExtension() === "gif") {
+			masklenna.write("test.jpeg");
+		} else {
+			console.log("bad format");
+			bot.sendMessage({to: channelID, message: "Your image isn't in the correct format. Use PNG, JPG/JPEG, BPM, or GIF"});
+		}
+			console.log("meme deep fried");
 	    setTimeout(() => {
 	        bot.uploadFile({
 	            to: channelID,
-	            file: "test.jpg"
+	            file: "test.jpeg"
 	        }, function(err, res) {
 	            if (err) {
 	                console.log(err);
 	                return;
 	            }
-	            fs.unlink("test.jpg");
+	            fs.unlink("test.jpeg");
 	        });
 	    }, 200);
+		console.log("meme sent");
 	});
 }
 });
