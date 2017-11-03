@@ -1,73 +1,5 @@
 var cluster = require('cluster');
-function deepfrymeme() {
-	var cluster = require('cluster');
-	
-	if (cluster.isMaster) {
-	  cluster.fork();
-	  console.log("forking cluster");
 
-	  cluster.on('exit', function(worker, code, signal) {
-	    cluster.fork();
-	  });
-	}
-
-	if (cluster.isWorker) {
-        console.log("deep frying meme in cluster");
-        console.log(link);
-        Jimp.read("h" + link, function(err, masklenna) {
-            if (err) throw err;
-
-            masklenna
-                .contrast(1)
-                .contrast(1)
-                .quality(1)
-                .color([{
-                        apply: 'saturate',
-                        params: [100]
-                    },
-                    {
-                        apply: 'brighten',
-                        params: [30]
-                    },
-                    {
-                        apply: 'saturate',
-                        params: [100]
-                    }
-                ])
-            if (masklenna.getExtension() === "png") {
-                masklenna.write("test.jpeg");
-            } else if (masklenna.getExtension() === "jpg") {
-                masklenna.write("test.jpeg");
-            } else if (masklenna.getExtension() === "jpeg") {
-                masklenna.write("test.jpeg");
-            } else if (masklenna.getExtension() === "bmp") {
-                masklenna.write("test.jpeg");
-            } else if (masklenna.getExtension() === "gif") {
-                masklenna.write("test.jpeg");
-            } else {
-                console.log("bad format");
-                bot.sendMessage({
-                    to: channelID,
-                    message: "Your image isn't in the correct format. Use PNG, JPG/JPEG, BPM, or GIF"
-                });
-            }
-            console.log("meme deep fried");
-            setTimeout(() => {
-                bot.uploadFile({
-                    to: universalchannelID,
-                    file: "test.jpeg"
-                }, function(err, res) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                    fs.unlink("test.jpeg");
-                });
-            }, 200);
-            console.log("meme sent");
-        });
-	}
-}
 if (cluster.isMaster) {
   cluster.fork();
   console.log("forking cluster");
@@ -115,6 +47,13 @@ if (cluster.isWorker) {
               name: "Type '$$help'"
           }
       });
+      setInterval(() => {
+	      bot.setPresence({
+	          game: {
+	              name: "Type '$$help'"
+	          }
+	      });
+      }, 100000);
   })
   bot.on('message', function(user, userID, channelID, message, event, callback, inviteURL) {
       if (userID == '372892414857445376') {
